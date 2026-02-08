@@ -338,21 +338,32 @@ else:
     
     st.pydeck_chart(deck)
     
-    # Priority queue
+        # Priority queue
     st.markdown("---")
     st.subheader("🎯 Restoration Priority Queue")
     
-    for idx, (_, row) in enumerate(df.sort_values('Priority_Score', ascending=False).iterrows(), 1):
-        css = "priority-critical" if row['Status']=='Critical' else "priority-high"
-        emoji = "🔴" if row['Status']=='Critical' else "🟡"
+    df_sorted = df.sort_values('Priority_Score', ascending=False)
+    
+    for idx, (_, row) in enumerate(df_sorted.iterrows(), 1):
+        status = row['Status']
+        degradation = row['Degradation_%']
+        priority = row['Priority_Score']
+        lake_name = row['Lake']
+        
+        if status == 'Critical':
+            css = "priority-critical"
+            emoji = "🔴"
+        elif status == 'High':
+            css = "priority-high"
+            emoji = "🟠"
+        else:
+            css = "priority-moderate"
+            emoji = "🟡"
         
         st.markdown(f"""
         <div class="{css}">
-            <b>#{idx}</b> {emoji} <b>{row['Lake']}</b> | 
-            Score: {row['Priority_Score']} | 
-            Loss: {row['Degradation_']}%
+            <b>#{idx}</b> {emoji} <b>{lake_name}</b> | 
+            Score: {priority} | 
+            Loss: {degradation}%
         </div>
         """, unsafe_allow_html=True)
-
-st.markdown("---")
-st.markdown("<p style='text-align:center;'>🌊 NeerChitra | Tamil Nadu Water Security Mission | AI-Powered</p>", unsafe_allow_html=True)
